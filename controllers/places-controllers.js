@@ -80,6 +80,16 @@ const createPlace = (req, res, next) => {
     res.status(201).json({place : newPlace});
 };
 
+const deletePlace = (req, res, next) => {
+    const placeId = req.params.pid;
+
+    //delete element from the array : js
+    DUMMY_PLACES = DUMMY_PLACES.filter(p => p.id != placeId);
+
+    res.status(200).json({message: "Deleted a place."});
+};
+
 exports.getPlaceById = getPlaceById;
 exports.getPlacesByUserId = getPlacesByUserId;
 exports.createPlace = createPlace;
+exports.deletePlace = deletePlace;
