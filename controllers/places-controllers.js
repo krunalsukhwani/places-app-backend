@@ -23,6 +23,17 @@ let DUMMY_PLACES = [
     },
     creator: "mutaz",
   },
+  {
+    id: "p3",
+    title: "Sky Zone Trampoline Park",
+    description: "Best sky zone park in toronto",
+    address: "45 Esandar Dr, Toronto, ON M4G 4C5",
+    location: {
+      lat: 43.7065237,
+      lng: -79.9666804,
+    },
+    creator: "omair",
+  },
 ];
 
 const getPlaceById = (req, res, next) => {
@@ -41,4 +52,21 @@ const getPlaceById = (req, res, next) => {
   res.json(place);
 };
 
+const getPlacesByUserId = (req, res, next) => {
+  const userId = req.params.uid;
+
+  const places = DUMMY_PLACES.filter((p) => {
+    return p.creator === userId;
+  });
+
+  if (!places || places.length === 0) {
+    return next(
+      new HttpError("Could not find a places for the provided user id.", 404)
+    );
+  }
+
+  res.json({ places });
+};
+
 exports.getPlaceById = getPlaceById;
+exports.getPlacesByUserId = getPlacesByUserId;
