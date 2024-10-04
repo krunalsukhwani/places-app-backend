@@ -2,6 +2,7 @@ const { validationResult } = require("express-validator");
 const HttpError = require("../models/http-error");
 const { v4: uuidv4 } = require("uuid");
 const getLocationForAddress = require("../util/location");
+const Place = require("../models/Place");
 
 let DUMMY_PLACES = [
   {
@@ -90,11 +91,23 @@ const createPlace = async (req, res, next) => {
       return next(error);
     }
 
-    const newPlace = { id : uuidv4(), title, description, address, location, creator };
+    const createdPlace = new Place({
+      title,
+      description,
+      address,
+      creator,
+      location,
+      image : 'https://commondatastorage.googleapis.com/codeskulptor-assets/gutenberg.jpg'
+    });
 
-    DUMMY_PLACES.push(newPlace);
+    try{
+      await createdPlace.save();
+    }catch(err){
+      const error = new HttpError("Creating place failed, please try again", 500);
+      return next(error);
+    }
 
-    res.status(201).json({place : newPlace});
+    res.status(201).json({place : createdPlace.toObject({getters: true})});
 };
 
 const deletePlace = (req, res, next) => {
