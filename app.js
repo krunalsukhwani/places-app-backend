@@ -20,6 +20,8 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || "An unknown error occured!" });
 });
 
+//database name is available in the connection string
+//database name: shared-places
 mongoose
   .connect('mongodb+srv://comp229_403:Mlvoi7p8XhkqN6Oc@cluster0.qtp7h.mongodb.net/shared-places?retryWrites=true&w=majority&appName=Cluster0')
   .then(() => {
