@@ -122,10 +122,32 @@ const createPlace = async (req, res, next) => {
     res.status(201).json({place : createdPlace.toObject({getters: true})});
 };
 
-const deletePlace = (req, res, next) => {
+const deletePlace = async (req, res, next) => {
     const placeId = req.params.pid;
 
-    DUMMY_PLACES = DUMMY_PLACES.filter(p => p.id != placeId);
+    let place;
+
+    //find the place by place id from the MongoDB
+    try{
+      place = await Place.findById(placeId);
+    }catch(err){
+      const error = new HttpError("Something went wrong, could not delete the place", 500);
+      return next(error);
+    }
+
+    //Display error message if place doesn't exist for the provided place id
+    if(!place){
+      const error = new HttpError("Could not find the place for the provided Place ID.", 404);
+      return next(error);
+    }
+
+    //Delete the place information from MongoDB if it exist
+    try{
+      await place.deleteOne();
+    }catch(err){
+      const error = new HttpError("Something went wrong, could not delete place.", 500);
+      return next(error);
+    }
 
     res.status(200).json({message: "Deleted a place."});
 };
